@@ -1,0 +1,443 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/dflynn15/gulp-jasmine-phantom#readme"
+
+    >gulp-jasmine-phantom (v3.0.0)</a>
+</h1>
+<h4>Jasmine 2.0 suite runner, optionally with PhantomJS</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.gulp-jasmine-phantom">module gulp-jasmine-phantom</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-jasmine-phantom.gulp-jasmine-phantom">
+            function <span class="apidocSignatureSpan"></span>gulp-jasmine-phantom
+            <span class="apidocSignatureSpan">(options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-jasmine-phantom.toString">
+            function <span class="apidocSignatureSpan">gulp-jasmine-phantom.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">gulp-jasmine-phantom.</span>terminal_reporter</span>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.gulp-jasmine-phantom.terminal_reporter">module gulp-jasmine-phantom.terminal_reporter</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-jasmine-phantom.terminal_reporter.TerminalReporter">
+            function <span class="apidocSignatureSpan">gulp-jasmine-phantom.terminal_reporter.</span>TerminalReporter
+            <span class="apidocSignatureSpan">(options)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.gulp-jasmine-phantom.toString">module gulp-jasmine-phantom.toString</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-jasmine-phantom.toString.toString">
+            function <span class="apidocSignatureSpan">gulp-jasmine-phantom.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.gulp-jasmine-phantom" id="apidoc.module.gulp-jasmine-phantom">module gulp-jasmine-phantom</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-jasmine-phantom.gulp-jasmine-phantom" id="apidoc.element.gulp-jasmine-phantom.gulp-jasmine-phantom">
+        function <span class="apidocSignatureSpan"></span>gulp-jasmine-phantom
+        <span class="apidocSignatureSpan">(options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">gulp-jasmine-phantom = function (options) {
+  var filePaths = [];
+
+  gulpOptions = options || {};
+
+  configJasmine(gulpOptions.jasmineVersion);
+
+  if(!!gulpOptions.integration) {
+    return through.obj(
+      function (file, encoding, callback) {
+        if (file.isNull()) {
+          callback(null, file);
+          return;
+        }
+        if (file.isStream()) {
+          callback(new gutil.PluginError(&#x27;gulp-jasmine-phantom&#x27;, &#x27;Streaming not supported&#x27;));
+          return;
+        }
+        filePaths.push(file.path);
+        callback(null, file);
+      }, function (callback) {
+        gutil.log(&#x27;Running Jasmine with PhantomJS&#x27;);
+        try {
+          if(gulpOptions.specHtml) {
+            runPhantom(
+              [
+                path.join(__dirname, &#x27;/lib/jasmine-runner.js&#x27;),
+                path.resolve(gulpOptions.specHtml),
+                JSON.stringify(gulpOptions)
+              ], function(success) {
+              callback(success);
+            });
+          } else {
+            compileRunner({
+              files: filePaths,
+              onComplete: function(success) {
+                callback(success);
+              }
+            });
+          }
+        } catch(error) {
+          callback(new gutil.PluginError(&#x27;gulp-jasmine-phantom&#x27;, error));
+        }
+      }
+    );
+  }
+
+  return through.obj(
+    function(file, encoding, callback) {
+      if (file.isNull()) {
+        callback(null, file);
+        return;
+      }
+
+      if (file.isStream()) {
+        callback(new gutil.PluginError(&#x27;gulp-jasmine-phantom&#x27;, &#x27;Streaming not supported&#x27;));
+        return;
+      }
+
+<span class="apidocCodeCommentSpan">      /**
+      * Get the cache object of the specs.js file,
+      * get its children and delete the childrens cache
+      */
+</span>      var modId = require.resolve(path.resolve(file.path));
+      var files = require.cache[modId];
+      if (typeof files !== &#x27;undefined&#x27;) {
+        for (var i in files.children) {
+          delete require.cache[files.children[i].id];
+        }
+      }
+      delete require.cache[modId];
+
+      filePaths.push(path.relative(process.cwd(), file.path));
+      callback(null, file);
+    },
+    function(callback) {
+      gutil.log(&#x27;Running Jasmine in Node&#x27;);
+      try {
+        var jasmine = new Jasmine(),
+            terminalReporter = require(&#x27;./lib/terminal-reporter.js&#x27;).TerminalReporter;
+
+        jasmine.addReporter(new terminalReporter(_.defaults(gulpOptions, {showColors: true})));
+
+        jasmine.loadConfig({
+          random: _.get(gulpOptions, &#x27;random&#x27;, false),
+          spec_files: filePaths
+        });
+
+        if (_.has(gulpOptions, &#x27;seed&#x27;)) {
+          jasmine.seed(gulpOptions.seed);
+        }
+
+        jasmine.onComplete(function(passed) {
+          callback(null);
+        });
+
+        jasmine.execute();
+
+      } catch(error) {
+        callback(new gutil.PluginError(&#x27;gulp-jasmine-phantom&#x27;, error));
+      }
+
+    }
+  );
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-jasmine-phantom.toString" id="apidoc.element.gulp-jasmine-phantom.toString">
+        function <span class="apidocSignatureSpan">gulp-jasmine-phantom.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return text;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.gulp-jasmine-phantom.terminal_reporter" id="apidoc.module.gulp-jasmine-phantom.terminal_reporter">module gulp-jasmine-phantom.terminal_reporter</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-jasmine-phantom.terminal_reporter.TerminalReporter" id="apidoc.element.gulp-jasmine-phantom.terminal_reporter.TerminalReporter">
+        function <span class="apidocSignatureSpan">gulp-jasmine-phantom.terminal_reporter.</span>TerminalReporter
+        <span class="apidocSignatureSpan">(options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">TerminalReporter = function (options) {
+  var print = console.log,
+    showColors = options.showColors || false,
+    done = options.done || function() {},
+    timer = options.timer || noopTimer,
+    stackTrace = options.includeStackTrace || false,
+    specCount,
+    failureCount,
+    failedSpecs = [],
+    pendingCount,
+    suiteIndentation = 0,
+    ansi = {
+      green: &#x27;\x1B[32m&#x27;,
+      red: &#x27;\x1B[31m&#x27;,
+      yellow: &#x27;\x1B[33m&#x27;,
+      none: &#x27;\x1B[0m&#x27;
+    };
+
+  this.jasmineStarted = function() {
+    specCount = 0;
+    failureCount = 0;
+    pendingCount = 0;
+    print(&#x27;Started&#x27;);
+    printNewline();
+    timer.start();
+  };
+
+  this.jasmineDone = function(result) {
+    printNewline();
+    for (var i = 0; i &#x3c; failedSpecs.length; i++) {
+      if(!i) {
+        print(&#x27;Failures:&#x27;);
+      }
+      specFailureDetails(failedSpecs[i]);
+    }
+
+    printNewline();
+
+    if(specCount &#x3e; 0) {
+
+      var successCount = specCount - failureCount,
+          specCounts = specCount + &#x27; &#x27; + plural(&#x27;spec&#x27;, specCount);
+
+      if(successCount) {
+        specCounts += &#x27;, &#x27; + colored(&#x27;green&#x27;,  successCount + &#x27; &#x27; + plural(&#x27;success&#x27;, successCount));
+      }
+
+      if(failureCount) {
+        specCounts += &#x27;, &#x27; + colored(&#x27;red&#x27;, failureCount + &#x27; &#x27; + plural(&#x27;failure&#x27;, failureCount));
+      }
+
+      if (pendingCount) {
+        specCounts += &#x27;, &#x27; + colored(&#x27;yellow&#x27;, pendingCount + &#x27; pending &#x27;);
+      }
+
+      print(specCounts);
+    } else {
+      print(&#x27;No specs found&#x27;);
+    }
+
+    var seconds = timer.elapsed() / 1000;
+    print(&#x27;Finished in &#x27; + seconds + &#x27; &#x27; + plural(&#x27;second&#x27;, seconds));
+
+    if (result &#x26;&#x26; result.order &#x26;&#x26; result.order.random) {
+      print(&#x27;Randomized with seed &#x27; + result.order.seed);
+      printNewline();
+    }
+
+    done(failureCount === 0);
+  };
+
+  this.suiteStarted = function(suite) {
+    print(indent(suite.fullName, suiteIndentation));
+    suiteIndentation += 2;
+  };
+
+  this.suiteDone = function(suite) {
+    suiteIndentation -= 2;
+  };
+
+  this.specDone = function(result) {
+    specCount++;
+
+    if (result.status == &#x27;pending&#x27;) {
+      pendingCount++;
+      print(indent(colored(&#x27;yellow&#x27;, &#x27;* &#x27; + result.description), suiteIndentation));
+      return;
+    }
+
+    if (result.status == &#x27;passed&#x27;) {
+      print(indent(colored(&#x27;green&#x27;, &#x27;\u2714 &#x27; + result.description), suiteIndentation));
+      return;
+    }
+
+    if (result.status == &#x27;failed&#x27;) {
+      failureCount++;
+      failedSpecs.push(result);
+      print(indent(colored(&#x27;red&#x27;, &#x27;\u2716 &#x27; + result.description), suiteIndentation));
+    }
+  };
+
+  function printNewline() {
+    print(&#x27;\n&#x27;);
+  }
+
+  function colored(color, str) {
+    return showColors ? (ansi[color] + str + ansi.none) : str;
+  }
+
+  function plural(str, count) {
+    if(str[str.length-1] === &#x27;s&#x27;) {
+      return count == 1 ? str : str + &#x27;es&#x27;;
+    }
+    return count == 1 ? str : str + &#x27;s&#x27;;
+  }
+
+  function repeat(thing, times) {
+    var arr = [];
+    for (var i = 0; i &#x3c; times; i++) {
+      arr.push(thing);
+    }
+    return arr;
+  }
+
+  function indent(str, spaces) {
+    var lines = (str || &#x27;&#x27;).split(&#x27;\n&#x27;);
+    var newArr = [];
+    for (var i = 0; i &#x3c; lines.length; i++) {
+      newArr.push(repeat(&#x27; &#x27;, spaces).join(&#x27;&#x27;) + lines[i]);
+    }
+    return newArr.join(&#x27;\n&#x27;);
+  }
+
+  function specFailureDetails(result) {
+    print(indent(result.fullName, 2));
+
+    for (var i = 0; i &#x3c; result.failedExpectations.length; i++) {
+      var failedExpectation = result.failedExpectations[i];
+      print(indent(colored(&#x27;red&#x27;, failedExpectation.message), 4));
+      if(stackTrace) {
+        print(indent(failedExpectation.stack, 2));
+      }
+    }
+
+  }
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.gulp-jasmine-phantom.toString" id="apidoc.module.gulp-jasmine-phantom.toString">module gulp-jasmine-phantom.toString</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-jasmine-phantom.toString.toString" id="apidoc.element.gulp-jasmine-phantom.toString.toString">
+        function <span class="apidocSignatureSpan">gulp-jasmine-phantom.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function toString() { [native code] }</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
