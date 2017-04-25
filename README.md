@@ -1,4 +1,7 @@
-# api documentation for  [gulp-jasmine-phantom (v3.0.0)](https://github.com/dflynn15/gulp-jasmine-phantom#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-gulp-jasmine-phantom.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-gulp-jasmine-phantom) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-gulp-jasmine-phantom.svg)](https://travis-ci.org/npmdoc/node-npmdoc-gulp-jasmine-phantom)
+# npmdoc-gulp-jasmine-phantom
+
+#### basic api documentation for  [gulp-jasmine-phantom (v3.0.0)](https://github.com/dflynn15/gulp-jasmine-phantom#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-gulp-jasmine-phantom.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-gulp-jasmine-phantom) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-gulp-jasmine-phantom.svg)](https://travis-ci.org/npmdoc/node-npmdoc-gulp-jasmine-phantom)
+
 #### Jasmine 2.0 suite runner, optionally with PhantomJS
 
 [![NPM](https://nodei.co/npm/gulp-jasmine-phantom.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/gulp-jasmine-phantom)
@@ -73,7 +76,8 @@
         "url": "git+https://github.com/dflynn15/gulp-jasmine-phantom.git"
     },
     "scripts": {},
-    "version": "3.0.0"
+    "version": "3.0.0",
+    "bin": {}
 }
 ```
 
